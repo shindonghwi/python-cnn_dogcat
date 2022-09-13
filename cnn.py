@@ -1,5 +1,4 @@
 """ 1. Import Library """
-import keras
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
