@@ -51,13 +51,17 @@ cnn.add(MaxPool2D(pool_size=(2, 2), strides=2))
 cnn.add(Conv2D(filters=32, kernel_size=3, activation='relu'))
 cnn.add(MaxPool2D(pool_size=(2, 2), strides=2))
 
-# 3 Flattening
+# 3 convolution & pooling ( max )
+cnn.add(Conv2D(filters=32, kernel_size=3, activation='relu'))
+cnn.add(MaxPool2D(pool_size=(2, 2), strides=2))
+
+# 4 Flattening
 cnn.add(Flatten())
 
-# 4 Full Connection
+# 5 Full Connection
 cnn.add(Dense(units=128, activation='relu'))
 
-# 5 Output Layer
+# 6 Output Layer
 # 이중 분류(개,고양이) 에서는 시그모이드 활성화 함수를 권장
 # 다중 분류에서는 소프트맥스 활성화 함수 사용 ( 각 예측 확률의 합을 1로 만들어야하기에 )
 cnn.add(Dense(units=1, activation='sigmoid'))
@@ -71,3 +75,41 @@ cnn.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # 2. train & evaluating test set
 cnn.fit(x=training_set, validation_data=test_set, epochs=25)
+
+""" 5. Prediction Single """
+import numpy as np
+from keras.preprocessing import image
+
+test_image_1 = image.image_utils.load_img(path='dataset/single_prediction/cat_or_dog_1.jpg', target_size=(64, 64))
+test_image_2 = image.image_utils.load_img(path='dataset/single_prediction/cat_or_dog_2.jpg', target_size=(64, 64))
+
+test_image_1 = image.image_utils.img_to_array(test_image_1)
+test_image_2 = image.image_utils.img_to_array(test_image_2)
+
+test_image_1 = np.expand_dims(test_image_1, axis=0)  # 배치 사이즈를 훈련떄와 맞춰야한다.
+test_image_2 = np.expand_dims(test_image_2, axis=0)
+
+result1 = cnn.predict(test_image_1 / 255.0)
+result2 = cnn.predict(test_image_2 / 255.0)
+
+print(training_set.class_indices)
+
+if result1[0][0] > 0.5:  # 개
+    prediction_1 = 'dog'
+else:
+    prediction_1 = 'cat'
+
+if result2[0][0] > 0.5:  # 개
+    prediction_2 = 'dog'
+else:
+    prediction_2 = 'cat'
+
+print('result1: ', result1)
+print('result2: ', result2)
+
+print('-------------')
+
+print('result_prediction_1: ', result1[0][0])
+print('result_prediction_2: ', result2[0][0])
+print('prediction_1: ', prediction_1)
+print('prediction_2: ', prediction_2)
