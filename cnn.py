@@ -61,3 +61,13 @@ cnn.add(Dense(units=128, activation='relu'))
 # 이중 분류(개,고양이) 에서는 시그모이드 활성화 함수를 권장
 # 다중 분류에서는 소프트맥스 활성화 함수 사용 ( 각 예측 확률의 합을 1로 만들어야하기에 )
 cnn.add(Dense(units=1, activation='sigmoid'))
+
+""" 4. Training CNN """
+# 1. compile
+# adam: 확률적 경사 하강법
+# binary_crossentropy: 이진분류를 하기에 바이너리 크로스엔트로피 설정
+# metrics -> accuracy: 분류 모델의 성능을 측정하는 적절한 방법
+cnn.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# 2. train & evaluating test set
+cnn.fit(x=training_set, validation_data=test_set, epochs=25)
